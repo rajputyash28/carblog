@@ -329,7 +329,7 @@ export default function BlogsPage() {
               </div>
 
               {/* Right Column - Classic Porsche */}
-              <div className="absolute top-[40px] right-0 w-[160px] h-[280px] z-20">
+              <div className="absolute top-5 left-20 w-[180px] h-[320px] z-10">
                 <Image
                   src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=160&h=280&fit=crop"
                   alt="Classic Porsche Sports Car"
