@@ -369,7 +369,7 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-// Get car image based on car brand and model
+// Get car image based on car brand and model with real category-based images
 export function getCarImage(car?: Car): string {
   if (!car) {
     const defaultImages = [
@@ -385,12 +385,70 @@ export function getCarImage(car?: Car): string {
   const brand = car.car.toLowerCase();
   const model = car.car_model.toLowerCase();
 
-  // Brand-specific images
+  // BMW specific images
+  if (brand === 'bmw') {
+    const bmwImages = [
+      'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&h=400&fit=crop', // BMW M3
+      'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=600&h=400&fit=crop', // BMW X5
+      'https://images.unsplash.com/photo-1606016159991-8b5d2f87a5a8?w=600&h=400&fit=crop', // BMW i8
+    ];
+    return bmwImages[car.id % bmwImages.length];
+  }
+
+  // Mercedes-Benz specific images
+  if (brand === 'mercedes-benz' || brand === 'mercedes') {
+    const mercedesImages = [
+      'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&h=400&fit=crop', // Mercedes AMG
+      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&h=400&fit=crop', // Mercedes Sports Car
+      'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop', // Mercedes Luxury
+    ];
+    return mercedesImages[car.id % mercedesImages.length];
+  }
+
+  // Truck specific images
+  if (model.includes('f-150') || model.includes('silverado') || model.includes('ram') || 
+      model.includes('tundra') || model.includes('tacoma') || model.includes('frontier')) {
+    const truckImages = [
+      'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=600&h=400&fit=crop', // Ford F-150
+      'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=600&h=400&fit=crop', // Pickup Truck
+      'https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=600&h=400&fit=crop', // Heavy Duty Truck
+    ];
+    return truckImages[car.id % truckImages.length];
+  }
+
+  // Sports car specific images
+  if (model.includes('corvette') || model.includes('mustang') || model.includes('camaro') ||
+      model.includes('911') || model.includes('gt-r') || brand === 'ferrari' || brand === 'lamborghini') {
+    const sportsCarImages = [
+      'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop', // Sports Car
+      'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&h=400&fit=crop', // Supercar
+      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&h=400&fit=crop', // Yellow Sports Car
+    ];
+    return sportsCarImages[car.id % sportsCarImages.length];
+  }
+
+  // Tesla/Electric specific images
+  if (brand === 'tesla' || model.includes('electric') || model.includes('ev')) {
+    const electricImages = [
+      'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&h=400&fit=crop', // Tesla Model S
+      'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&h=400&fit=crop', // Electric Car
+    ];
+    return electricImages[car.id % electricImages.length];
+  }
+
+  // SUV specific images
+  if (model.includes('suv') || model.includes('x5') || model.includes('q7') || 
+      model.includes('escalade') || model.includes('tahoe')) {
+    const suvImages = [
+      'https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=600&h=400&fit=crop', // Luxury SUV
+      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&h=400&fit=crop', // SUV
+    ];
+    return suvImages[car.id % suvImages.length];
+  }
+
+  // Brand-specific fallback images
   const brandImages: Record<string, string> = {
-    'bmw': 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&h=400&fit=crop',
-    'mercedes-benz': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&h=400&fit=crop',
     'audi': 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&h=400&fit=crop',
-    'tesla': 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&h=400&fit=crop',
     'porsche': 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&h=400&fit=crop',
     'ferrari': 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop',
     'lamborghini': 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&h=400&fit=crop',
@@ -411,17 +469,6 @@ export function getCarImage(car?: Car): string {
     'infiniti': 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&h=400&fit=crop',
     'acura': 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop'
   };
-
-  // Model-specific images for sports cars
-  if (model.includes('corvette') || model.includes('mustang') || model.includes('camaro')) {
-    return 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop';
-  }
-  if (model.includes('911') || model.includes('boxster') || model.includes('cayman')) {
-    return 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&h=400&fit=crop';
-  }
-  if (model.includes('f-150') || model.includes('silverado') || model.includes('ram')) {
-    return 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=600&h=400&fit=crop';
-  }
 
   // Return brand-specific image or default
   return brandImages[brand] || 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&h=400&fit=crop';

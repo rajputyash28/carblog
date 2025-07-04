@@ -274,7 +274,7 @@ export default function BlogsPage() {
 
   return (
     <div>
-      {/* Hero Section with Overlapping Images */}
+      {/* Hero Section with Overlapping Images - Exact Layout from Screenshot */}
       <section className="bg-[#232536] text-white relative">
         <div className="max-w-[1280px] mx-auto px-4 h-[594px] flex items-center">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
@@ -304,49 +304,49 @@ export default function BlogsPage() {
               </button>
             </div>
             
-            {/* Overlapping Images Grid - Recreating the layout from your screenshot */}
+            {/* Overlapping Images Grid - Recreating EXACT layout from your screenshot */}
             <div className="relative h-[400px] w-full">
-              {/* Top left - Muscle car */}
-              <div className="absolute top-0 left-0 w-[200px] h-[280px] z-10">
+              {/* Left Column - Muscle Car (Dodge Challenger) */}
+              <div className="absolute top-0 left-0 w-[180px] h-[320px] z-10">
                 <Image
-                  src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=200&h=280&fit=crop"
-                  alt="Muscle Car"
-                  width={200}
-                  height={280}
-                  className="rounded-lg object-cover w-full h-full shadow-lg"
-                />
-              </div>
-
-              {/* Center - Yellow sports car (main focal point) */}
-              <div className="absolute top-[40px] left-[120px] w-[280px] h-[200px] z-30">
-                <Image
-                  src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=280&h=200&fit=crop"
-                  alt="Yellow Sports Car"
-                  width={280}
-                  height={200}
+                  src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=180&h=320&fit=crop"
+                  alt="Dodge Challenger Muscle Car"
+                  width={180}
+                  height={320}
                   className="rounded-lg object-cover w-full h-full shadow-xl"
                 />
               </div>
 
-              {/* Top right - Classic car */}
-              <div className="absolute top-[20px] right-0 w-[160px] h-[240px] z-20">
+              {/* Center Top - Yellow Mercedes AMG GT */}
+              <div className="absolute top-0 left-[140px] w-[300px] h-[180px] z-30">
                 <Image
-                  src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=160&h=240&fit=crop"
-                  alt="Classic Car"
-                  width={160}
-                  height={240}
-                  className="rounded-lg object-cover w-full h-full shadow-lg"
+                  src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=300&h=180&fit=crop"
+                  alt="Yellow Mercedes AMG GT Sports Car"
+                  width={300}
+                  height={180}
+                  className="rounded-lg object-cover w-full h-full shadow-2xl"
                 />
               </div>
 
-              {/* Bottom left - Car interior/dashboard */}
-              <div className="absolute bottom-0 left-[40px] w-[180px] h-[140px] z-20">
+              {/* Right Column - Classic Porsche */}
+              <div className="absolute top-[40px] right-0 w-[160px] h-[280px] z-20">
                 <Image
-                  src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=180&h=140&fit=crop"
-                  alt="Car Interior"
-                  width={180}
+                  src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=160&h=280&fit=crop"
+                  alt="Classic Porsche Sports Car"
+                  width={160}
+                  height={280}
+                  className="rounded-lg object-cover w-full h-full shadow-xl"
+                />
+              </div>
+
+              {/* Bottom Left - Car Interior/Dashboard */}
+              <div className="absolute bottom-0 left-[60px] w-[200px] h-[140px] z-20">
+                <Image
+                  src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=200&h=140&fit=crop"
+                  alt="Luxury Car Interior Dashboard"
+                  width={200}
                   height={140}
-                  className="rounded-lg object-cover w-full h-full shadow-lg"
+                  className="rounded-lg object-cover w-full h-full shadow-xl"
                 />
               </div>
             </div>
