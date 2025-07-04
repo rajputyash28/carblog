@@ -33,7 +33,144 @@ export interface CarByModelResponse {
   Cars: Car[];
 }
 
-// Retry mechanism for fetch operations
+// Mock data for posts and users to replace unreliable external API
+const mockUsers: User[] = [
+  { id: 1, name: "John Smith", email: "john.smith@example.com", username: "johnsmith" },
+  { id: 2, name: "Sarah Johnson", email: "sarah.johnson@example.com", username: "sarahj" },
+  { id: 3, name: "Mike Wilson", email: "mike.wilson@example.com", username: "mikew" },
+  { id: 4, name: "Emily Davis", email: "emily.davis@example.com", username: "emilyd" },
+  { id: 5, name: "David Brown", email: "david.brown@example.com", username: "davidb" },
+  { id: 6, name: "Lisa Garcia", email: "lisa.garcia@example.com", username: "lisag" },
+  { id: 7, name: "Tom Anderson", email: "tom.anderson@example.com", username: "toma" },
+  { id: 8, name: "Anna Martinez", email: "anna.martinez@example.com", username: "annam" },
+  { id: 9, name: "Chris Taylor", email: "chris.taylor@example.com", username: "christ" },
+  { id: 10, name: "Jessica White", email: "jessica.white@example.com", username: "jessicaw" }
+];
+
+const mockPosts: Post[] = [
+  {
+    id: 1,
+    title: "The Future of Electric Vehicles: What to Expect in 2025",
+    body: "Electric vehicles are revolutionizing the automotive industry. With advances in battery technology, charging infrastructure, and government incentives, EVs are becoming more accessible than ever. This comprehensive guide explores the latest trends, upcoming models, and what consumers can expect from the electric vehicle market in 2025.",
+    userId: 1
+  },
+  {
+    id: 2,
+    title: "Top 10 Luxury SUVs That Define Premium Comfort",
+    body: "Luxury SUVs combine the best of both worlds: spacious interiors and premium features. From advanced safety systems to cutting-edge infotainment, these vehicles offer unparalleled comfort for families and executives alike. Discover which luxury SUVs are setting new standards in the automotive world.",
+    userId: 2
+  },
+  {
+    id: 3,
+    title: "Sports Car Showdown: Performance vs. Practicality",
+    body: "Sports cars have always been about pure performance, but modern buyers want more. Today's sports cars must balance incredible speed with daily usability. We compare the latest models to see which ones offer the perfect blend of excitement and practicality for enthusiasts.",
+    userId: 3
+  },
+  {
+    id: 4,
+    title: "Essential Car Maintenance Tips for Every Driver",
+    body: "Regular maintenance is key to keeping your vehicle running smoothly and safely. From oil changes to tire rotations, understanding basic maintenance can save you money and extend your car's lifespan. Learn the essential maintenance tasks every driver should know about.",
+    userId: 4
+  },
+  {
+    id: 5,
+    title: "Hybrid Technology: The Bridge to an Electric Future",
+    body: "Hybrid vehicles serve as the perfect stepping stone between traditional gasoline engines and fully electric powertrains. With improved fuel efficiency and reduced emissions, hybrids offer an excellent compromise for environmentally conscious drivers who aren't ready to go fully electric.",
+    userId: 5
+  },
+  {
+    id: 6,
+    title: "Classic Cars Making a Modern Comeback",
+    body: "Classic car designs are inspiring modern automotive styling. Manufacturers are bringing back iconic design elements while incorporating contemporary technology and safety features. Explore how vintage aesthetics are influencing today's automotive landscape.",
+    userId: 6
+  },
+  {
+    id: 7,
+    title: "Budget-Friendly Cars That Don't Compromise on Quality",
+    body: "You don't need to spend a fortune to get a reliable, feature-rich vehicle. Many affordable cars now come with advanced safety features, modern infotainment systems, and impressive fuel economy. Discover the best value propositions in today's automotive market.",
+    userId: 7
+  },
+  {
+    id: 8,
+    title: "Off-Road Adventures: Choosing the Right Vehicle",
+    body: "Off-road driving requires specialized vehicles designed to handle challenging terrain. From rock crawling to desert racing, different off-road activities demand different capabilities. Learn what features to look for when choosing your next adventure vehicle.",
+    userId: 8
+  },
+  {
+    id: 9,
+    title: "The Rise of Autonomous Driving Technology",
+    body: "Self-driving cars are no longer science fiction. With advanced sensors, artificial intelligence, and machine learning, autonomous vehicles are becoming a reality. Explore the current state of self-driving technology and what the future holds for transportation.",
+    userId: 9
+  },
+  {
+    id: 10,
+    title: "Truck Evolution: From Work Horse to Luxury Statement",
+    body: "Modern pickup trucks have evolved far beyond their utilitarian roots. Today's trucks offer luxury amenities, advanced technology, and impressive performance capabilities. Discover how trucks have transformed into versatile vehicles for work and play.",
+    userId: 10
+  },
+  {
+    id: 11,
+    title: "Motorcycle Safety: Essential Gear and Best Practices",
+    body: "Motorcycle riding offers freedom and excitement, but safety should always be the top priority. From protective gear to defensive riding techniques, learn the essential safety measures every motorcyclist should follow to stay safe on the road.",
+    userId: 1
+  },
+  {
+    id: 12,
+    title: "Car Insurance 101: Understanding Your Coverage Options",
+    body: "Car insurance can be complex, but understanding your options is crucial for protecting yourself and your vehicle. From liability to comprehensive coverage, learn about different insurance types and how to choose the right policy for your needs.",
+    userId: 2
+  },
+  {
+    id: 13,
+    title: "The Environmental Impact of Different Vehicle Types",
+    body: "As environmental concerns grow, understanding the ecological impact of different vehicles becomes increasingly important. Compare the carbon footprints of gasoline, hybrid, and electric vehicles to make informed decisions about your next car purchase.",
+    userId: 3
+  },
+  {
+    id: 14,
+    title: "Winter Driving: Preparing Your Vehicle for Cold Weather",
+    body: "Winter weather presents unique challenges for drivers. From tire selection to emergency kits, proper preparation can make the difference between a safe journey and a dangerous situation. Learn how to winterize your vehicle and drive safely in cold conditions.",
+    userId: 4
+  },
+  {
+    id: 15,
+    title: "Car Buying Guide: New vs. Used Vehicle Considerations",
+    body: "Deciding between a new or used vehicle involves many factors beyond just price. Consider depreciation, warranty coverage, financing options, and long-term costs when making this important decision. Our comprehensive guide helps you choose the right option.",
+    userId: 5
+  },
+  {
+    id: 16,
+    title: "The Art of Car Detailing: Keeping Your Vehicle Pristine",
+    body: "Professional car detailing goes beyond a simple wash and wax. Learn the techniques and products used by professionals to keep vehicles looking their best. From paint correction to interior protection, discover the secrets of automotive detailing.",
+    userId: 6
+  },
+  {
+    id: 17,
+    title: "Performance Modifications: Enhancing Your Vehicle Safely",
+    body: "Vehicle modifications can improve performance, but they must be done safely and legally. From engine tuning to suspension upgrades, learn about popular modifications and how to enhance your vehicle without compromising safety or reliability.",
+    userId: 7
+  },
+  {
+    id: 18,
+    title: "Family Car Shopping: Safety and Practicality First",
+    body: "When shopping for a family vehicle, safety and practicality take precedence over style and performance. Learn about important safety ratings, cargo space considerations, and family-friendly features that make daily life easier and safer.",
+    userId: 8
+  },
+  {
+    id: 19,
+    title: "The Future of Automotive Design: Trends and Innovations",
+    body: "Automotive design is constantly evolving, influenced by technology, environmental concerns, and changing consumer preferences. Explore the latest design trends and innovations that are shaping the vehicles of tomorrow.",
+    userId: 9
+  },
+  {
+    id: 20,
+    title: "Road Trip Planning: Essential Tips for Long-Distance Travel",
+    body: "Planning a successful road trip requires more than just mapping your route. From vehicle preparation to emergency supplies, learn how to plan and execute memorable road trips while staying safe and comfortable on long journeys.",
+    userId: 10
+  }
+];
+
+// Retry mechanism for fetch operations (kept for any future external API needs)
 async function fetchWithRetry(url: string, options?: RequestInit, maxRetries: number = 3, delay: number = 1000): Promise<Response> {
   let lastError: Error;
   
@@ -56,14 +193,12 @@ async function fetchWithRetry(url: string, options?: RequestInit, maxRetries: nu
   throw lastError!;
 }
 
-// JSONPlaceholder API functions
+// Posts API functions - Now using local mock data
 export async function getPosts(): Promise<Post[]> {
   try {
-    const response = await fetchWithRetry('https://jsonplaceholder.typicode.com/posts');
-    if (!response.ok) {
-      throw new Error('Failed to fetch posts');
-    }
-    return await response.json();
+    // Simulate async operation with a small delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return mockPosts;
   } catch (error) {
     console.error('Error fetching posts:', error);
     return [];
@@ -72,11 +207,9 @@ export async function getPosts(): Promise<Post[]> {
 
 export async function getPost(id: number): Promise<Post | null> {
   try {
-    const response = await fetchWithRetry(`https://jsonplaceholder.typicode.com/posts/${id}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch post');
-    }
-    return await response.json();
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const post = mockPosts.find(post => post.id === id);
+    return post || null;
   } catch (error) {
     console.error('Error fetching post:', error);
     return null;
@@ -85,18 +218,16 @@ export async function getPost(id: number): Promise<Post | null> {
 
 export async function getUser(id: number): Promise<User | null> {
   try {
-    const response = await fetchWithRetry(`https://jsonplaceholder.typicode.com/users/${id}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch user');
-    }
-    return await response.json();
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const user = mockUsers.find(user => user.id === id);
+    return user || null;
   } catch (error) {
     console.error('Error fetching user:', error);
     return null;
   }
 }
 
-// Car API functions - Now using local data instead of unreliable external API
+// Car API functions - Using local data
 export async function getCars(): Promise<Car[]> {
   try {
     // Simulate async operation with a small delay
@@ -202,30 +333,8 @@ export function generateCarTitle(post: Post, car?: Car): string {
     return templates[post.id % templates.length];
   }
   
-  const carTitles = [
-    "Top 5 Electric Cars in 2025",
-    "Best SUVs for Family Adventures", 
-    "Luxury Car Review: Performance Meets Elegance",
-    "Maintenance Tips for Your Dream Car",
-    "Sports Cars That Define Speed",
-    "Eco-Friendly Vehicles for the Future",
-    "Classic Cars Making a Comeback",
-    "Budget-Friendly Cars with Premium Features",
-    "Off-Road Vehicles for Every Terrain",
-    "Hybrid Technology: The Future of Driving",
-    "BMW vs Mercedes: The Ultimate Comparison",
-    "Tesla Model S: Electric Revolution",
-    "Ford F-150: America's Favorite Truck",
-    "Porsche 911: Timeless Sports Car Icon",
-    "Honda Civic: Reliability Redefined",
-    "Audi A4: German Engineering Excellence",
-    "Toyota Camry: The Perfect Family Car",
-    "Chevrolet Corvette: American Muscle",
-    "Nissan GT-R: Japanese Performance Beast",
-    "Volkswagen Golf: European Compact Champion"
-  ];
-  
-  return carTitles[post.id % carTitles.length] || post.title;
+  // Use the actual post title from mock data instead of generic car titles
+  return post.title;
 }
 
 // Get unique car brands from the local data
