@@ -1,3 +1,5 @@
+import carData from './car-data.json';
+
 export interface Post {
   id: number;
   title: string;
@@ -94,15 +96,12 @@ export async function getUser(id: number): Promise<User | null> {
   }
 }
 
-// Car API functions
+// Car API functions - Now using local data instead of unreliable external API
 export async function getCars(): Promise<Car[]> {
   try {
-    const response = await fetchWithRetry('https://myfakeapi.com/api/cars/');
-    if (!response.ok) {
-      throw new Error('Failed to fetch cars');
-    }
-    const data: CarApiResponse = await response.json();
-    return data.cars || [];
+    // Simulate async operation with a small delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return carData.cars;
   } catch (error) {
     console.error('Error fetching cars:', error);
     return [];
@@ -111,12 +110,9 @@ export async function getCars(): Promise<Car[]> {
 
 export async function getCar(id: number): Promise<Car | null> {
   try {
-    const response = await fetchWithRetry(`https://myfakeapi.com/api/cars/${id}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch car');
-    }
-    const data = await response.json();
-    return data.Car || null;
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const car = carData.cars.find(car => car.id === id);
+    return car || null;
   } catch (error) {
     console.error('Error fetching car:', error);
     return null;
@@ -125,12 +121,10 @@ export async function getCar(id: number): Promise<Car | null> {
 
 export async function getCarsByModel(model: string): Promise<Car[]> {
   try {
-    const response = await fetchWithRetry(`https://myfakeapi.com/api/cars/model/${model}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch cars by model');
-    }
-    const data: CarByModelResponse = await response.json();
-    return data.Cars || [];
+    await new Promise(resolve => setTimeout(resolve, 50));
+    return carData.cars.filter(car => 
+      car.car_model.toLowerCase().includes(model.toLowerCase())
+    );
   } catch (error) {
     console.error('Error fetching cars by model:', error);
     return [];
@@ -139,12 +133,10 @@ export async function getCarsByModel(model: string): Promise<Car[]> {
 
 export async function getCarsByBrand(brand: string): Promise<Car[]> {
   try {
-    const response = await fetchWithRetry(`https://myfakeapi.com/api/cars/name/${brand}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch cars by brand');
-    }
-    const data: CarByModelResponse = await response.json();
-    return data.Cars || [];
+    await new Promise(resolve => setTimeout(resolve, 50));
+    return carData.cars.filter(car => 
+      car.car.toLowerCase().includes(brand.toLowerCase())
+    );
   } catch (error) {
     console.error('Error fetching cars by brand:', error);
     return [];
@@ -153,16 +145,16 @@ export async function getCarsByBrand(brand: string): Promise<Car[]> {
 
 export async function getCarsByYear(year: number, operator?: 'gt' | 'lt'): Promise<Car[]> {
   try {
-    let url = `https://myfakeapi.com/api/cars/year/${year}`;
-    if (operator) {
-      url += `?q=${operator}`;
-    }
-    const response = await fetchWithRetry(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch cars by year');
-    }
-    const data: CarByModelResponse = await response.json();
-    return data.Cars || [];
+    await new Promise(resolve => setTimeout(resolve, 50));
+    return carData.cars.filter(car => {
+      if (operator === 'gt') {
+        return car.car_model_year > year;
+      } else if (operator === 'lt') {
+        return car.car_model_year < year;
+      } else {
+        return car.car_model_year === year;
+      }
+    });
   } catch (error) {
     console.error('Error fetching cars by year:', error);
     return [];
@@ -236,11 +228,11 @@ export function generateCarTitle(post: Post, car?: Car): string {
   return carTitles[post.id % carTitles.length] || post.title;
 }
 
-// Get unique car brands from the API
+// Get unique car brands from the local data
 export async function getCarBrands(): Promise<string[]> {
   try {
-    const cars = await getCars();
-    const brands = [...new Set(cars.map(car => car.car))].sort();
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const brands = [...new Set(carData.cars.map(car => car.car))].sort();
     return brands;
   } catch (error) {
     console.error('Error fetching car brands:', error);
@@ -281,7 +273,8 @@ export function categorizeCarsByType(cars: Car[]): Record<string, Car[]> {
         model.includes('outback') || model.includes('ascent') || model.includes('compass') || 
         model.includes('cherokee') || model.includes('grand cherokee') || model.includes('wrangler') ||
         model.includes('rogue') || model.includes('murano') || model.includes('santa fe') ||
-        model.includes('tucson') || model.includes('sorento') || model.includes('sportage')) {
+        model.includes('tucson') || model.includes('sorento') || model.includes('sportage') ||
+        model.includes('range rover')) {
       categories.SUV.push(car);
     }
     
@@ -307,6 +300,8 @@ export function categorizeCarsByType(cars: Car[]): Record<string, Car[]> {
         model.includes('m5') || model.includes('m6') || model.includes('s4') ||
         model.includes('s5') || model.includes('rs') || model.includes('type r') ||
         model.includes('sti') || model.includes('evo') || model.includes('nsx') ||
+        model.includes('f-type') || model.includes('488') || model.includes('huracan') ||
+        model.includes('720s') || model.includes('evora') ||
         brand === 'ferrari' || brand === 'lamborghini' || brand === 'mclaren' ||
         brand === 'lotus' || brand === 'alfa romeo') {
       categories.Sports.push(car);
@@ -335,7 +330,8 @@ export function categorizeCarsByType(cars: Car[]): Record<string, Car[]> {
         model.includes('xts') || model.includes('continental') || model.includes('mkz') ||
         model.includes('legacy') || model.includes('impreza') || model.includes('wrx') ||
         model.includes('sonata') || model.includes('elantra') || model.includes('genesis') ||
-        model.includes('optima') || model.includes('forte') || model.includes('rio')) {
+        model.includes('optima') || model.includes('forte') || model.includes('rio') ||
+        model.includes('ghibli') || model.includes('giulia') || model.includes('q50')) {
       categories.Sedan.push(car);
     }
     
@@ -490,7 +486,14 @@ export function getCarImage(car?: Car): string {
     'mazda': 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=600&h=400&fit=crop',
     'subaru': 'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=600&h=400&fit=crop',
     'infiniti': 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&h=400&fit=crop',
-    'acura': 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop'
+    'acura': 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop',
+    'mclaren': 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&h=400&fit=crop',
+    'bentley': 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop',
+    'rolls-royce': 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop',
+    'maserati': 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&h=400&fit=crop',
+    'aston martin': 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&h=400&fit=crop',
+    'lotus': 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop',
+    'alfa romeo': 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&h=400&fit=crop'
   };
 
   // Return brand-specific image or default

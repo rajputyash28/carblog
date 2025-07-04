@@ -1,0 +1,304 @@
+{
+  "cars": [
+    {
+      "id": 1,
+      "car": "BMW",
+      "car_model": "X5",
+      "car_color": "Black",
+      "car_model_year": 2023,
+      "car_vin": "1HGBH41JXMN109186",
+      "price": "$65,000",
+      "availability": true
+    },
+    {
+      "id": 2,
+      "car": "Mercedes-Benz",
+      "car_model": "C-Class",
+      "car_color": "Silver",
+      "car_model_year": 2024,
+      "car_vin": "2HGBH41JXMN109187",
+      "price": "$55,000",
+      "availability": true
+    },
+    {
+      "id": 3,
+      "car": "Audi",
+      "car_model": "A4",
+      "car_color": "White",
+      "car_model_year": 2023,
+      "car_vin": "3HGBH41JXMN109188",
+      "price": "$48,000",
+      "availability": false
+    },
+    {
+      "id": 4,
+      "car": "Tesla",
+      "car_model": "Model S",
+      "car_color": "Red",
+      "car_model_year": 2024,
+      "car_vin": "4HGBH41JXMN109189",
+      "price": "$95,000",
+      "availability": true
+    },
+    {
+      "id": 5,
+      "car": "Ford",
+      "car_model": "F-150",
+      "car_color": "Blue",
+      "car_model_year": 2023,
+      "car_vin": "5HGBH41JXMN109190",
+      "price": "$42,000",
+      "availability": true
+    },
+    {
+      "id": 6,
+      "car": "Chevrolet",
+      "car_model": "Corvette",
+      "car_color": "Yellow",
+      "car_model_year": 2024,
+      "car_vin": "6HGBH41JXMN109191",
+      "price": "$75,000",
+      "availability": true
+    },
+    {
+      "id": 7,
+      "car": "Toyota",
+      "car_model": "Camry",
+      "car_color": "Gray",
+      "car_model_year": 2023,
+      "car_vin": "7HGBH41JXMN109192",
+      "price": "$28,000",
+      "availability": true
+    },
+    {
+      "id": 8,
+      "car": "Honda",
+      "car_model": "Civic",
+      "car_color": "Black",
+      "car_model_year": 2024,
+      "car_vin": "8HGBH41JXMN109193",
+      "price": "$25,000",
+      "availability": false
+    },
+    {
+      "id": 9,
+      "car": "Nissan",
+      "car_model": "GT-R",
+      "car_color": "Silver",
+      "car_model_year": 2023,
+      "car_vin": "9HGBH41JXMN109194",
+      "price": "$115,000",
+      "availability": true
+    },
+    {
+      "id": 10,
+      "car": "Porsche",
+      "car_model": "911",
+      "car_color": "White",
+      "car_model_year": 2024,
+      "car_vin": "AHGBH41JXMN109195",
+      "price": "$125,000",
+      "availability": true
+    },
+    {
+      "id": 11,
+      "car": "Lexus",
+      "car_model": "RX",
+      "car_color": "Black",
+      "car_model_year": 2023,
+      "car_vin": "BHGBH41JXMN109196",
+      "price": "$52,000",
+      "availability": true
+    },
+    {
+      "id": 12,
+      "car": "Cadillac",
+      "car_model": "Escalade",
+      "car_color": "Black",
+      "car_model_year": 2024,
+      "car_vin": "CHGBH41JXMN109197",
+      "price": "$85,000",
+      "availability": false
+    },
+    {
+      "id": 13,
+      "car": "Jaguar",
+      "car_model": "F-Type",
+      "car_color": "Red",
+      "car_model_year": 2023,
+      "car_vin": "DHGBH41JXMN109198",
+      "price": "$78,000",
+      "availability": true
+    },
+    {
+      "id": 14,
+      "car": "Land Rover",
+      "car_model": "Range Rover",
+      "car_color": "Green",
+      "car_model_year": 2024,
+      "car_vin": "EHGBH41JXMN109199",
+      "price": "$95,000",
+      "availability": true
+    },
+    {
+      "id": 15,
+      "car": "Volkswagen",
+      "car_model": "Golf",
+      "car_color": "Blue",
+      "car_model_year": 2023,
+      "car_vin": "FHGBH41JXMN109200",
+      "price": "$32,000",
+      "availability": true
+    },
+    {
+      "id": 16,
+      "car": "Hyundai",
+      "car_model": "Sonata",
+      "car_color": "Silver",
+      "car_model_year": 2024,
+      "car_vin": "GHGBH41JXMN109201",
+      "price": "$26,000",
+      "availability": false
+    },
+    {
+      "id": 17,
+      "car": "Kia",
+      "car_model": "Optima",
+      "car_color": "White",
+      "car_model_year": 2023,
+      "car_vin": "HHGBH41JXMN109202",
+      "price": "$24,000",
+      "availability": true
+    },
+    {
+      "id": 18,
+      "car": "Mazda",
+      "car_model": "CX-5",
+      "car_color": "Red",
+      "car_model_year": 2024,
+      "car_vin": "IHGBH41JXMN109203",
+      "price": "$35,000",
+      "availability": true
+    },
+    {
+      "id": 19,
+      "car": "Subaru",
+      "car_model": "Outback",
+      "car_color": "Green",
+      "car_model_year": 2023,
+      "car_vin": "JHGBH41JXMN109204",
+      "price": "$38,000",
+      "availability": true
+    },
+    {
+      "id": 20,
+      "car": "Infiniti",
+      "car_model": "Q50",
+      "car_color": "Gray",
+      "car_model_year": 2024,
+      "car_vin": "KHGBH41JXMN109205",
+      "price": "$45,000",
+      "availability": false
+    },
+    {
+      "id": 21,
+      "car": "Acura",
+      "car_model": "MDX",
+      "car_color": "Black",
+      "car_model_year": 2023,
+      "car_vin": "LHGBH41JXMN109206",
+      "price": "$58,000",
+      "availability": true
+    },
+    {
+      "id": 22,
+      "car": "Ferrari",
+      "car_model": "488 GTB",
+      "car_color": "Red",
+      "car_model_year": 2024,
+      "car_vin": "MHGBH41JXMN109207",
+      "price": "$275,000",
+      "availability": true
+    },
+    {
+      "id": 23,
+      "car": "Lamborghini",
+      "car_model": "Huracan",
+      "car_color": "Yellow",
+      "car_model_year": 2023,
+      "car_vin": "NHGBH41JXMN109208",
+      "price": "$250,000",
+      "availability": false
+    },
+    {
+      "id": 24,
+      "car": "McLaren",
+      "car_model": "720S",
+      "car_color": "Orange",
+      "car_model_year": 2024,
+      "car_vin": "OHGBH41JXMN109209",
+      "price": "$300,000",
+      "availability": true
+    },
+    {
+      "id": 25,
+      "car": "Bentley",
+      "car_model": "Continental GT",
+      "car_color": "Black",
+      "car_model_year": 2023,
+      "car_vin": "PHGBH41JXMN109210",
+      "price": "$220,000",
+      "availability": true
+    },
+    {
+      "id": 26,
+      "car": "Rolls-Royce",
+      "car_model": "Phantom",
+      "car_color": "Silver",
+      "car_model_year": 2024,
+      "car_vin": "QHGBH41JXMN109211",
+      "price": "$450,000",
+      "availability": false
+    },
+    {
+      "id": 27,
+      "car": "Maserati",
+      "car_model": "Ghibli",
+      "car_color": "Blue",
+      "car_model_year": 2023,
+      "car_vin": "RHGBH41JXMN109212",
+      "price": "$85,000",
+      "availability": true
+    },
+    {
+      "id": 28,
+      "car": "Aston Martin",
+      "car_model": "DB11",
+      "car_color": "Green",
+      "car_model_year": 2024,
+      "car_vin": "SHGBH41JXMN109213",
+      "price": "$215,000",
+      "availability": true
+    },
+    {
+      "id": 29,
+      "car": "Lotus",
+      "car_model": "Evora",
+      "car_color": "Yellow",
+      "car_model_year": 2023,
+      "car_vin": "THGBH41JXMN109214",
+      "price": "$95,000",
+      "availability": true
+    },
+    {
+      "id": 30,
+      "car": "Alfa Romeo",
+      "car_model": "Giulia",
+      "car_color": "Red",
+      "car_model_year": 2024,
+      "car_vin": "UHGBH41JXMN109215",
+      "price": "$42,000",
+      "availability": false
+    }
+  ]
+}
