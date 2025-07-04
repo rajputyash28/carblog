@@ -318,7 +318,7 @@ export default function BlogsPage() {
               </div>
 
               {/* Center Top - Yellow Mercedes AMG GT */}
-              <div className="absolute top-5 left-30 w-[180px] h-[320px] z-10">
+              <div className="absolute top-5 left-20 w-[180px] h-[320px] z-10">
                 <Image
                   src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=300&h=180&fit=crop"
                   alt="Yellow Mercedes AMG GT Sports Car"
