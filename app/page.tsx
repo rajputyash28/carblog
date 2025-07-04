@@ -4,16 +4,16 @@ import NewTechnologySection from '@/components/NewTechnologySection';
 import AllCategorySection from '@/components/AllCategorySection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import { Suspense } from 'react';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import CarLoader from '@/components/CarLoader';
 
 export default function Home() {
   return (
     <div>
       <HeroSection />
-      <Suspense fallback={<LoadingSpinner message="Loading latest posts..." />}>
+      <Suspense fallback={<CarLoader message="Loading latest posts..." />}>
         <LatestSection />
       </Suspense>
-      <Suspense fallback={<LoadingSpinner message="Loading technology posts..." />}>
+      <Suspense fallback={<CarLoader message="Loading technology posts..." />}>
         <NewTechnologySection />
       </Suspense>
       <AllCategorySection />

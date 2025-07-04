@@ -1,40 +1,111 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { getPosts, getUser, getCars, Post, User, Car, generateCarTitle, getCarBrands, categorizeCarsByType, searchCars, filterCarsByAvailability, debounce, getCarImage } from '@/lib/api';
+import { useReducer, useEffect, useCallback, useMemo } from 'react';
+import { getPosts, getUser, getCars, Post, User, Car, generateCarTitle, getCarBrands, categorizeCarsByType, debounce, getCarImage } from '@/lib/api';
 import CarPostCard from '@/components/CarPostCard';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
+import CarLoader from '@/components/CarLoader';
 import Image from 'next/image';
 
+// State interface
+interface BlogState {
+  posts: Post[];
+  cars: Car[];
+  users: Record<number, User>;
+  brands: string[];
+  loading: boolean;
+  error: string | null;
+  searchTerm: string;
+  debouncedSearchTerm: string;
+  selectedCategory: string;
+  selectedBrand: string;
+  showAvailableOnly: boolean;
+  displayedPosts: number;
+}
+
+// Action types
+type BlogAction =
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'SET_POSTS'; payload: Post[] }
+  | { type: 'SET_CARS'; payload: Car[] }
+  | { type: 'SET_USERS'; payload: Record<number, User> }
+  | { type: 'SET_BRANDS'; payload: string[] }
+  | { type: 'SET_SEARCH_TERM'; payload: string }
+  | { type: 'SET_DEBOUNCED_SEARCH_TERM'; payload: string }
+  | { type: 'SET_SELECTED_CATEGORY'; payload: string }
+  | { type: 'SET_SELECTED_BRAND'; payload: string }
+  | { type: 'SET_SHOW_AVAILABLE_ONLY'; payload: boolean }
+  | { type: 'SET_DISPLAYED_POSTS'; payload: number }
+  | { type: 'LOAD_MORE_POSTS' };
+
+// Initial state
+const initialState: BlogState = {
+  posts: [],
+  cars: [],
+  users: {},
+  brands: [],
+  loading: true,
+  error: null,
+  searchTerm: '',
+  debouncedSearchTerm: '',
+  selectedCategory: 'All',
+  selectedBrand: 'All',
+  showAvailableOnly: false,
+  displayedPosts: 20,
+};
+
+// Reducer function
+function blogReducer(state: BlogState, action: BlogAction): BlogState {
+  switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    case 'SET_POSTS':
+      return { ...state, posts: action.payload };
+    case 'SET_CARS':
+      return { ...state, cars: action.payload };
+    case 'SET_USERS':
+      return { ...state, users: action.payload };
+    case 'SET_BRANDS':
+      return { ...state, brands: action.payload };
+    case 'SET_SEARCH_TERM':
+      return { ...state, searchTerm: action.payload };
+    case 'SET_DEBOUNCED_SEARCH_TERM':
+      return { ...state, debouncedSearchTerm: action.payload };
+    case 'SET_SELECTED_CATEGORY':
+      return { ...state, selectedCategory: action.payload };
+    case 'SET_SELECTED_BRAND':
+      return { ...state, selectedBrand: action.payload };
+    case 'SET_SHOW_AVAILABLE_ONLY':
+      return { ...state, showAvailableOnly: action.payload };
+    case 'SET_DISPLAYED_POSTS':
+      return { ...state, displayedPosts: action.payload };
+    case 'LOAD_MORE_POSTS':
+      return { ...state, displayedPosts: state.displayedPosts + 20 };
+    default:
+      return state;
+  }
+}
+
 export default function BlogsPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [cars, setCars] = useState<Car[]>([]);
-  const [users, setUsers] = useState<Record<number, User>>({});
-  const [brands, setBrands] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedBrand, setSelectedBrand] = useState('All');
-  const [showAvailableOnly, setShowAvailableOnly] = useState(false);
-  const [displayedPosts, setDisplayedPosts] = useState(20);
+  const [state, dispatch] = useReducer(blogReducer, initialState);
 
   const categories = ['All', 'Electric', 'SUV', 'Luxury', 'Sports', 'Hybrid', 'Sedan', 'Truck'];
 
   // Debounced search
   const debouncedSearch = useCallback(
     debounce((term: string) => {
-      setDebouncedSearchTerm(term);
+      dispatch({ type: 'SET_DEBOUNCED_SEARCH_TERM', payload: term });
     }, 300),
     []
   );
 
   useEffect(() => {
-    debouncedSearch(searchTerm);
-  }, [searchTerm, debouncedSearch]);
+    debouncedSearch(state.searchTerm);
+  }, [state.searchTerm, debouncedSearch]);
 
   useEffect(() => {
     fetchData();
@@ -42,8 +113,8 @@ export default function BlogsPage() {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       
       // Fetch all data in parallel
       const [postsData, carsData, brandsData] = await Promise.all([
@@ -53,13 +124,13 @@ export default function BlogsPage() {
       ]);
       
       if (postsData.length === 0) {
-        setError('No blog posts available');
+        dispatch({ type: 'SET_ERROR', payload: 'No blog posts available' });
         return;
       }
       
-      setPosts(postsData);
-      setCars(carsData);
-      setBrands(['All', ...brandsData]);
+      dispatch({ type: 'SET_POSTS', payload: postsData });
+      dispatch({ type: 'SET_CARS', payload: carsData });
+      dispatch({ type: 'SET_BRANDS', payload: ['All', ...brandsData] });
       
       // Fetch users for each post
       const userPromises = postsData.slice(0, 20).map(post => getUser(post.userId));
@@ -72,40 +143,39 @@ export default function BlogsPage() {
         }
       });
       
-      setUsers(usersMap);
+      dispatch({ type: 'SET_USERS', payload: usersMap });
     } catch (err) {
-      setError('Failed to load blog posts. Please try again.');
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to load blog posts. Please try again.' });
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   const getCarForPost = (post: Post): Car | undefined => {
-    // Try to match post with a car by ID, or get a random car
-    return cars.find(car => car.id === post.id) || cars[post.id % cars.length];
+    return state.cars.find(car => car.id === post.id) || state.cars[post.id % state.cars.length];
   };
 
   // Categorized cars for filtering
-  const categorizedCars = useMemo(() => categorizeCarsByType(cars), [cars]);
+  const categorizedCars = useMemo(() => categorizeCarsByType(state.cars), [state.cars]);
 
   const filteredPosts = useMemo(() => {
-    let filtered = posts;
+    let filtered = state.posts;
 
     // Filter by search term
-    if (debouncedSearchTerm) {
+    if (state.debouncedSearchTerm) {
       filtered = filtered.filter(post => {
         const car = getCarForPost(post);
         const title = generateCarTitle(post, car);
         
-        return title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-               (car && (car.car.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-                       car.car_model.toLowerCase().includes(debouncedSearchTerm.toLowerCase())));
+        return title.toLowerCase().includes(state.debouncedSearchTerm.toLowerCase()) ||
+               (car && (car.car.toLowerCase().includes(state.debouncedSearchTerm.toLowerCase()) ||
+                       car.car_model.toLowerCase().includes(state.debouncedSearchTerm.toLowerCase())));
       });
     }
 
     // Filter by category
-    if (selectedCategory !== 'All') {
-      const categoryCars = categorizedCars[selectedCategory] || [];
+    if (state.selectedCategory !== 'All') {
+      const categoryCars = categorizedCars[state.selectedCategory] || [];
       const categoryCarIds = new Set(categoryCars.map(car => car.id));
       
       filtered = filtered.filter(post => {
@@ -115,15 +185,15 @@ export default function BlogsPage() {
     }
 
     // Filter by brand
-    if (selectedBrand !== 'All') {
+    if (state.selectedBrand !== 'All') {
       filtered = filtered.filter(post => {
         const car = getCarForPost(post);
-        return car && car.car === selectedBrand;
+        return car && car.car === state.selectedBrand;
       });
     }
 
     // Filter by availability
-    if (showAvailableOnly) {
+    if (state.showAvailableOnly) {
       filtered = filtered.filter(post => {
         const car = getCarForPost(post);
         return car && car.availability;
@@ -131,13 +201,13 @@ export default function BlogsPage() {
     }
 
     return filtered;
-  }, [posts, debouncedSearchTerm, selectedCategory, selectedBrand, showAvailableOnly, cars, categorizedCars]);
+  }, [state.posts, state.debouncedSearchTerm, state.selectedCategory, state.selectedBrand, state.showAvailableOnly, state.cars, categorizedCars]);
 
   const loadMore = () => {
-    setDisplayedPosts(prev => prev + 20);
+    dispatch({ type: 'LOAD_MORE_POSTS' });
   };
 
-  if (loading) {
+  if (state.loading) {
     return (
       <div>
         {/* Hero Section Skeleton */}
@@ -161,19 +231,19 @@ export default function BlogsPage() {
             </div>
           </div>
         </section>
-        <LoadingSpinner message="Loading car blogs and real car data..." />
+        <CarLoader message="Loading car blogs and real car data..." />
       </div>
     );
   }
 
-  if (error) {
+  if (state.error) {
     return (
       <div>
         {/* Hero Section */}
-        <section className="bg-[#232536] text-white py-16">
-          <div className="max-w-[1280px] mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
+        <section className="bg-[#232536] text-white relative">
+          <div className="max-w-[1280px] mx-auto px-4 h-[594px] flex items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+              <div className="z-10">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                   Your Journey<br />
                   Your Car<br />
@@ -186,7 +256,7 @@ export default function BlogsPage() {
                   Subscribe ✓
                 </button>
               </div>
-              <div className="relative">
+              <div className="relative h-full flex items-center justify-center">
                 <div className="h-64 bg-gray-600 rounded-lg mb-4"></div>
                 <div className="grid grid-cols-3 gap-4">
                   {[1, 2, 3].map(i => (
@@ -197,7 +267,7 @@ export default function BlogsPage() {
             </div>
           </div>
         </section>
-        <ErrorMessage message={error} onRetry={fetchData} />
+        <ErrorMessage message={state.error} onRetry={fetchData} />
       </div>
     );
   }
@@ -220,12 +290,12 @@ export default function BlogsPage() {
               <div className="flex items-center gap-4 mb-8">
                 <div className="text-sm">
                   <span className="text-gray-400">Real Data:</span>
-                  <span className="text-white font-semibold ml-2">{cars.length} Cars</span>
+                  <span className="text-white font-semibold ml-2">{state.cars.length} Cars</span>
                 </div>
                 <div className="text-sm">
                   <span className="text-gray-400">Available:</span>
                   <span className="text-green-400 font-semibold ml-2">
-                    {cars.filter(car => car.availability).length} Cars
+                    {state.cars.filter(car => car.availability).length} Cars
                   </span>
                 </div>
               </div>
@@ -234,47 +304,49 @@ export default function BlogsPage() {
               </button>
             </div>
             
-            {/* Overlapping Images Grid */}
-            <div className="relative h-full flex items-center justify-center">
-              {/* Main large image */}
-              <div className="relative z-10">
+            {/* Overlapping Images Grid - Recreating the layout from your screenshot */}
+            <div className="relative h-[400px] w-full">
+              {/* Top left - Muscle car */}
+              <div className="absolute top-0 left-0 w-[200px] h-[280px] z-10">
                 <Image
-                  src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=300&fit=crop"
-                  alt="Luxury Car"
-                  width={400}
-                  height={300}
-                  className="rounded-lg"
+                  src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=200&h=280&fit=crop"
+                  alt="Muscle Car"
+                  width={200}
+                  height={280}
+                  className="rounded-lg object-cover w-full h-full shadow-lg"
                 />
               </div>
-              
-              {/* Overlapping smaller images */}
-              <div className="absolute top-0 right-0 z-20">
+
+              {/* Center - Yellow sports car (main focal point) */}
+              <div className="absolute top-[40px] left-[120px] w-[280px] h-[200px] z-30">
                 <Image
-                  src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=200&h=150&fit=crop"
-                  alt="Car"
+                  src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=280&h=200&fit=crop"
+                  alt="Yellow Sports Car"
+                  width={280}
+                  height={200}
+                  className="rounded-lg object-cover w-full h-full shadow-xl"
+                />
+              </div>
+
+              {/* Top right - Classic car */}
+              <div className="absolute top-[20px] right-0 w-[160px] h-[240px] z-20">
+                <Image
+                  src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=160&h=240&fit=crop"
+                  alt="Classic Car"
+                  width={160}
+                  height={240}
+                  className="rounded-lg object-cover w-full h-full shadow-lg"
+                />
+              </div>
+
+              {/* Bottom left - Car interior/dashboard */}
+              <div className="absolute bottom-0 left-[40px] w-[180px] h-[140px] z-20">
+                <Image
+                  src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=180&h=140&fit=crop"
+                  alt="Car Interior"
                   width={180}
-                  height={135}
-                  className="rounded-lg"
-                />
-              </div>
-              
-              <div className="absolute bottom-0 left-0 z-20">
-                <Image
-                  src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=200&h=150&fit=crop"
-                  alt="Car"
-                  width={180}
-                  height={135}
-                  className="rounded-lg"
-                />
-              </div>
-              
-              <div className="absolute bottom-10 right-10 z-30">
-                <Image
-                  src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=150&h=100&fit=crop"
-                  alt="Car"
-                  width={150}
-                  height={100}
-                  className="rounded-lg"
+                  height={140}
+                  className="rounded-lg object-cover w-full h-full shadow-lg"
                 />
               </div>
             </div>
@@ -292,8 +364,8 @@ export default function BlogsPage() {
                 <input
                   type="text"
                   placeholder="Search cars, brands, models..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={state.searchTerm}
+                  onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5959]"
                 />
               </div>
@@ -301,8 +373,8 @@ export default function BlogsPage() {
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={showAvailableOnly}
-                    onChange={(e) => setShowAvailableOnly(e.target.checked)}
+                    checked={state.showAvailableOnly}
+                    onChange={(e) => dispatch({ type: 'SET_SHOW_AVAILABLE_ONLY', payload: e.target.checked })}
                     className="rounded"
                   />
                   <span className="text-sm">Available only</span>
@@ -316,9 +388,9 @@ export default function BlogsPage() {
               {categories.map(category => (
                 <button
                   key={category}
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => dispatch({ type: 'SET_SELECTED_CATEGORY', payload: category })}
                   className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                    selectedCategory === category
+                    state.selectedCategory === category
                       ? 'bg-[#FF5959] text-white'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
@@ -334,12 +406,12 @@ export default function BlogsPage() {
             {/* Brand Filters */}
             <div className="flex gap-2 flex-wrap">
               <span className="text-sm font-medium text-gray-700 py-2">Brands:</span>
-              {brands.slice(0, 10).map(brand => (
+              {state.brands.slice(0, 10).map(brand => (
                 <button
                   key={brand}
-                  onClick={() => setSelectedBrand(brand)}
+                  onClick={() => dispatch({ type: 'SET_SELECTED_BRAND', payload: brand })}
                   className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                    selectedBrand === brand
+                    state.selectedBrand === brand
                       ? 'bg-blue-500 text-white'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
@@ -347,7 +419,7 @@ export default function BlogsPage() {
                   {brand}
                   {brand !== 'All' && (
                     <span className="ml-1 text-xs">
-                      ({cars.filter(car => car.car === brand).length})
+                      ({state.cars.filter(car => car.car === brand).length})
                     </span>
                   )}
                 </button>
@@ -363,12 +435,12 @@ export default function BlogsPage() {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold">
               Car Blog Posts
-              {debouncedSearchTerm && ` for "${debouncedSearchTerm}"`}
-              {selectedCategory !== 'All' && ` in ${selectedCategory}`}
-              {selectedBrand !== 'All' && ` - ${selectedBrand}`}
+              {state.debouncedSearchTerm && ` for "${state.debouncedSearchTerm}"`}
+              {state.selectedCategory !== 'All' && ` in ${state.selectedCategory}`}
+              {state.selectedBrand !== 'All' && ` - ${state.selectedBrand}`}
             </h2>
             <div className="text-sm text-gray-600">
-              Showing {Math.min(displayedPosts, filteredPosts.length)} of {filteredPosts.length} posts
+              Showing {Math.min(state.displayedPosts, filteredPosts.length)} of {filteredPosts.length} posts
             </div>
           </div>
           
@@ -380,13 +452,13 @@ export default function BlogsPage() {
           ) : (
             <>
               <div className="space-y-8">
-                {filteredPosts.slice(0, displayedPosts).map((post) => {
+                {filteredPosts.slice(0, state.displayedPosts).map((post) => {
                   const car = getCarForPost(post);
                   return (
                     <CarPostCard 
                       key={post.id} 
                       post={post} 
-                      user={users[post.userId]}
+                      user={state.users[post.userId]}
                       car={car}
                     />
                   );
@@ -394,7 +466,7 @@ export default function BlogsPage() {
               </div>
               
               {/* Load More Button */}
-              {displayedPosts < filteredPosts.length && (
+              {state.displayedPosts < filteredPosts.length && (
                 <div className="text-center mt-12">
                   <button
                     onClick={loadMore}

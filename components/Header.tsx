@@ -1,11 +1,30 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import CarLoader from './CarLoader';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleNavigation = (href: string) => {
+    startTransition(() => {
+      router.push(href);
+    });
+    setIsMenuOpen(false);
+  };
+
+  if (isPending) {
+    return (
+      <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <CarLoader message="Navigating to your destination..." />
+      </div>
+    );
+  }
 
   return (
     <header className="bg-[#232536] text-white sticky top-0 z-50">
@@ -20,18 +39,30 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="hover:text-gray-300 transition-colors">
+            <button 
+              onClick={() => handleNavigation('/')}
+              className="hover:text-gray-300 transition-colors"
+            >
               Home
-            </Link>
-            <Link href="/blogs" className="hover:text-gray-300 transition-colors">
+            </button>
+            <button 
+              onClick={() => handleNavigation('/blogs')}
+              className="hover:text-gray-300 transition-colors"
+            >
               Blogs
-            </Link>
-            <Link href="/about" className="hover:text-gray-300 transition-colors">
+            </button>
+            <button 
+              onClick={() => handleNavigation('/about')}
+              className="hover:text-gray-300 transition-colors"
+            >
               About
-            </Link>
-            <Link href="/contact" className="hover:text-gray-300 transition-colors">
+            </button>
+            <button 
+              onClick={() => handleNavigation('/contact')}
+              className="hover:text-gray-300 transition-colors"
+            >
               Contact Us
-            </Link>
+            </button>
             <button className="bg-white text-[#232536] px-6 py-2 rounded-md hover:bg-gray-100 transition-colors">
               Subscribe
             </button>
@@ -50,18 +81,30 @@ export default function Header() {
         {isMenuOpen && (
           <nav className="md:hidden py-4 border-t border-gray-600">
             <div className="flex flex-col space-y-4">
-              <Link href="/" className="hover:text-gray-300 transition-colors">
+              <button 
+                onClick={() => handleNavigation('/')}
+                className="hover:text-gray-300 transition-colors text-left"
+              >
                 Home
-              </Link>
-              <Link href="/blogs" className="hover:text-gray-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => handleNavigation('/blogs')}
+                className="hover:text-gray-300 transition-colors text-left"
+              >
                 Blogs
-              </Link>
-              <Link href="/about" className="hover:text-gray-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => handleNavigation('/about')}
+                className="hover:text-gray-300 transition-colors text-left"
+              >
                 About
-              </Link>
-              <Link href="/contact" className="hover:text-gray-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => handleNavigation('/contact')}
+                className="hover:text-gray-300 transition-colors text-left"
+              >
                 Contact Us
-              </Link>
+              </button>
               <button className="bg-white text-[#232536] px-6 py-2 rounded-md hover:bg-gray-100 transition-colors w-fit">
                 Subscribe
               </button>
