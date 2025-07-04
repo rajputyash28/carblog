@@ -340,7 +340,7 @@ export default function BlogsPage() {
               </div>
 
               {/* Bottom Left - Car Interior/Dashboard */}
-              <div className="absolute top-7 left-2000 w-[180px] h-[320px] z-10">
+              <div className="absolute top-7 left-20 w-[180px] h-[320px] z-10">
                 <Image
                   src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=200&h=140&fit=crop"
                   alt="Luxury Car Interior Dashboard"
