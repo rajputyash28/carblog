@@ -31,10 +31,33 @@ export interface CarByModelResponse {
   Cars: Car[];
 }
 
+// Retry mechanism for fetch operations
+async function fetchWithRetry(url: string, options?: RequestInit, maxRetries: number = 3, delay: number = 1000): Promise<Response> {
+  let lastError: Error;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      return response;
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`Fetch attempt ${attempt} failed for ${url}:`, error);
+      
+      if (attempt < maxRetries) {
+        // Wait before retrying, with exponential backoff
+        const waitTime = delay * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+  }
+  
+  throw lastError!;
+}
+
 // JSONPlaceholder API functions
 export async function getPosts(): Promise<Post[]> {
   try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const response = await fetchWithRetry('https://jsonplaceholder.typicode.com/posts');
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
     }
@@ -47,7 +70,7 @@ export async function getPosts(): Promise<Post[]> {
 
 export async function getPost(id: number): Promise<Post | null> {
   try {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    const response = await fetchWithRetry(`https://jsonplaceholder.typicode.com/posts/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch post');
     }
@@ -60,7 +83,7 @@ export async function getPost(id: number): Promise<Post | null> {
 
 export async function getUser(id: number): Promise<User | null> {
   try {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+    const response = await fetchWithRetry(`https://jsonplaceholder.typicode.com/users/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch user');
     }
@@ -74,7 +97,7 @@ export async function getUser(id: number): Promise<User | null> {
 // Car API functions
 export async function getCars(): Promise<Car[]> {
   try {
-    const response = await fetch('https://myfakeapi.com/api/cars/');
+    const response = await fetchWithRetry('https://myfakeapi.com/api/cars/');
     if (!response.ok) {
       throw new Error('Failed to fetch cars');
     }
@@ -88,7 +111,7 @@ export async function getCars(): Promise<Car[]> {
 
 export async function getCar(id: number): Promise<Car | null> {
   try {
-    const response = await fetch(`https://myfakeapi.com/api/cars/${id}`);
+    const response = await fetchWithRetry(`https://myfakeapi.com/api/cars/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch car');
     }
@@ -102,7 +125,7 @@ export async function getCar(id: number): Promise<Car | null> {
 
 export async function getCarsByModel(model: string): Promise<Car[]> {
   try {
-    const response = await fetch(`https://myfakeapi.com/api/cars/model/${model}`);
+    const response = await fetchWithRetry(`https://myfakeapi.com/api/cars/model/${model}`);
     if (!response.ok) {
       throw new Error('Failed to fetch cars by model');
     }
@@ -116,7 +139,7 @@ export async function getCarsByModel(model: string): Promise<Car[]> {
 
 export async function getCarsByBrand(brand: string): Promise<Car[]> {
   try {
-    const response = await fetch(`https://myfakeapi.com/api/cars/name/${brand}`);
+    const response = await fetchWithRetry(`https://myfakeapi.com/api/cars/name/${brand}`);
     if (!response.ok) {
       throw new Error('Failed to fetch cars by brand');
     }
@@ -134,7 +157,7 @@ export async function getCarsByYear(year: number, operator?: 'gt' | 'lt'): Promi
     if (operator) {
       url += `?q=${operator}`;
     }
-    const response = await fetch(url);
+    const response = await fetchWithRetry(url);
     if (!response.ok) {
       throw new Error('Failed to fetch cars by year');
     }
